@@ -2,6 +2,7 @@ package com.learning.university.service;
 
 import com.learning.university.entity.Student;
 import com.learning.university.entity.University;
+import com.learning.university.model.AddStudentDetailsRequest;
 import com.learning.university.model.StudentDTO;
 import com.learning.university.model.UniversityDTO;
 import com.learning.university.repository.UniversityRespository;
@@ -104,4 +105,66 @@ class UniversityServiceTest {
 
         verify(universityRespository, times(1)).save(any(University.class));
     }
+    @Test
+    void testAddStudentDetails_shouldAddAndReturnUpdatedDetails() {
+        // Mock repository
+        UniversityRespository universityRespository = mock(UniversityRespository.class);
+
+        // Inject into service manually
+        UniversityService universityService = new UniversityService();
+        universityService.universityRespository = universityRespository;
+
+        // Arrange
+        String universityName = "Oxford University";
+
+        AddStudentDetailsRequest inputRequest = new AddStudentDetailsRequest();
+        inputRequest.setName(universityName);
+
+        StudentDTO studentDTO1 = new StudentDTO();
+        studentDTO1.setName("John Doe");
+        studentDTO1.setEmail("john@example.com");
+        studentDTO1.setEnrollementDate(String.valueOf(LocalDate.of(2024, 1, 10)));
+
+        StudentDTO studentDTO2 = new StudentDTO();
+        studentDTO2.setName("Jane Smith");
+        studentDTO2.setEmail("jane@example.com");
+        studentDTO2.setEnrollementDate(String.valueOf(LocalDate.of(2024, 2, 15)));
+
+        inputRequest.setStudentDTOList(List.of(studentDTO1, studentDTO2));
+
+        // Mock existing university with students
+        University existingUniversity = new University();
+        existingUniversity.setName(universityName);
+        existingUniversity.setStudents(new HashSet<>()); // No students initially
+
+        // Act: when findByName is called, return the mock university
+        when(universityRespository.findByName(universityName)).thenReturn(existingUniversity);
+
+        // Mock save to return university with students
+        when(universityRespository.save(any(University.class))).thenAnswer(invocation -> {
+            University uni = invocation.getArgument(0);
+
+            // Mock bi-directional link
+            for (Student s : uni.getStudents()) {
+                s.setUniversity(uni);
+            }
+            return uni;
+        });
+
+        // Act
+        AddStudentDetailsRequest result = universityService.addStudentDetails(inputRequest);
+
+        // Assert
+        assertEquals(universityName, result.getName());
+        assertEquals(2, result.getStudentDTOList().size());
+
+        List<String> names = result.getStudentDTOList().stream().map(StudentDTO::getName).toList();
+        assertTrue(names.contains("John Doe"));
+        assertTrue(names.contains("Jane Smith"));
+
+        // Verify repository methods
+        verify(universityRespository).findByName(universityName);
+        verify(universityRespository).save(any(University.class));
+    }
 }
+
