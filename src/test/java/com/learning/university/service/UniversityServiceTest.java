@@ -104,4 +104,40 @@ class UniversityServiceTest {
 
         verify(universityRespository, times(1)).save(any(University.class));
     }
+
+    @Test
+    void testDisplayUniversityStudentDetails_withStudents() {
+        UniversityRespository universityRespository = mock(UniversityRespository.class);
+        UniversityService universityService = new UniversityService();
+        universityService.universityRespository = universityRespository;
+
+        Student student = new Student();
+        student.setName("Sandeep");
+        student.setEmail("sandu@gmail.com");
+        student.setEnrolledDate("05/09/2007");
+
+        Student student1 = new Student();g
+        student1.setName("Ram");
+        student1.setEmail("ram@gmail.com");
+        student1.setEnrolledDate("08/01/2006");
+
+        Set<Student> studentset = new HashSet<>();
+        studentset.add(student);
+        studentset.add(student1);
+
+        University university = new University();
+        university.setName("Solo University");
+        university.setLocation("Delhi");
+        university.setEstablishedYear(String.valueOf(2000));
+        university.setStudents(studentset);
+
+        when(universityRespository.findAllById(234)).thenReturn(university);
+
+        List<String> students = universityService.displayUniversityStudentDetails(234);
+
+        assertEquals(2, students.size());
+        assertEquals("Sandeep", students.get(0));
+        assertEquals("Ram", students.get(1));
+    }
+
 }

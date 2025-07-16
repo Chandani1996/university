@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UniversityRespository extends JpaRepository<University,Integer> {
+    University findAllById(Integer id);
 }
