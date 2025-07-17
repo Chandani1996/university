@@ -1,5 +1,6 @@
 package com.learning.university.controller;
 
+import com.learning.university.model.AddStudentDetailsRequest;
 import com.learning.university.model.UniversityDTO;
 import com.learning.university.service.UniversityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +47,9 @@ public class UniversityController {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
         }
+    }
+    @PutMapping("/add")
+    public AddStudentDetailsRequest addStudentDetails(@RequestBody AddStudentDetailsRequest addStudentDetails){
+        return universityService.addStudentDetails(addStudentDetails);
     }
 }
