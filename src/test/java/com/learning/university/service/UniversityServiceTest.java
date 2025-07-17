@@ -133,23 +133,15 @@ class UniversityServiceTest {
         inputRequest.setStudentDTOList(List.of(studentDTO1, studentDTO2));
 
         // Mock existing university with students
-        University existingUniversity = new University();
-        existingUniversity.setName(universityName);
-        existingUniversity.setStudents(new HashSet<>()); // No students initially
+        University university = new University();
+        university.setName(universityName);
+        university.setStudents(new HashSet<>()); // No students initially
 
         // Act: when findByName is called, return the mock university
-        when(universityRespository.findByName(universityName)).thenReturn(existingUniversity);
+        when(universityRespository.findByName(universityName)).thenReturn(university);
 
         // Mock save to return university with students
-        when(universityRespository.save(any(University.class))).thenAnswer(invocation -> {
-            University uni = invocation.getArgument(0);
-
-            // Mock bi-directional link
-            for (Student s : uni.getStudents()) {
-                s.setUniversity(uni);
-            }
-            return uni;
-        });
+        when(universityRespository.save(any(University.class))).thenReturn(university);
 
         // Act
         AddStudentDetailsRequest result = universityService.addStudentDetails(inputRequest);

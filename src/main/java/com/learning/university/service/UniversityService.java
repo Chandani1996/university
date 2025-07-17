@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.learning.university.util.Mappers.getStudentFromStudentDTO;
+import static com.learning.university.util.Mappers.getStudentDTOFromStudent;
+
 @Service
 public class UniversityService {
 
@@ -28,34 +31,28 @@ public class UniversityService {
         university.setEstablishedYear(universityRequest.getEstablishedYear());
         if (universityRequest.getStudentDTOList() != null && !universityRequest.getStudentDTOList().isEmpty()) {
             Set<Student> students = universityRequest.getStudentDTOList().stream().map(s -> {
-                Student student = new Student();
-                student.setName(s.getName());
-                student.setEmail(s.getEmail());
-                student.setEnrolledDate(s.getEnrollementDate());
-                student.setUniversity(university); // important for FK
+                Student student = getStudentFromStudentDTO(s, university);
                 return student;
             }).collect(Collectors.toSet());
 
             university.setStudents(students);
         }
         University savedUniversity = universityRespository.save(university);
+        List<StudentDTO> studentDTOList = new ArrayList<>();
+
+        if (savedUniversity.getStudents() != null && !savedUniversity.getStudents().isEmpty()) {
+            studentDTOList = savedUniversity.getStudents().stream().map(s -> {
+                StudentDTO dto = getStudentDTOFromStudent(s);
+                return dto;
+            }).collect(Collectors.toList());
+        }
 
         UniversityDTO universityResponse = new UniversityDTO();
         universityResponse.setName(savedUniversity.getName());
         universityResponse.setLocation(savedUniversity.getLocation());
         universityResponse.setEstablishedYear(savedUniversity.getEstablishedYear());
+        universityResponse.setStudentDTOList(studentDTOList);
 
-        if (savedUniversity.getStudents() != null && !savedUniversity.getStudents().isEmpty()) {
-            List<StudentDTO> studentDTOList = savedUniversity.getStudents().stream().map(s -> {
-                StudentDTO dto = new StudentDTO();
-                dto.setName(s.getName());
-                dto.setEmail(s.getEmail());
-                dto.setEnrollementDate(s.getEnrolledDate());
-                return dto;
-            }).collect(Collectors.toList());
-
-            universityResponse.setStudentDTOList(studentDTOList);
-        }
         return universityResponse;
 
     }
@@ -70,13 +67,8 @@ public class UniversityService {
         }
 
         List<StudentDTO> studentDtoList = addStudentDetails.getStudentDTOList();
-        //Set<Student> studentList = new HashSet<>();
         for (StudentDTO studentdto : studentDtoList) {
-            Student student = new Student();
-            student.setName(studentdto.getName());
-            student.setEmail(studentdto.getEmail());
-            student.setEnrolledDate(studentdto.getEnrollementDate());
-            student.setUniversity(university);
+            Student student = getStudentFromStudentDTO(studentdto, university);
             exsistingStudents.add(student);
         }
         university.setStudents(exsistingStudents);
@@ -88,10 +80,7 @@ public class UniversityService {
         Set<Student> students = savedUniversity.getStudents();
         List<StudentDTO> studentDTOList = new ArrayList<>();
         for(Student student: students){
-            StudentDTO studentDTO = new StudentDTO();
-            studentDTO.setName(student.getName());
-            studentDTO.setEmail(student.getEmail());
-            studentDTO.setEnrollementDate(student.getEnrolledDate());
+            StudentDTO studentDTO = getStudentDTOFromStudent(student);
             studentDTOList.add(studentDTO);
         }
         addStudentDetailsRequest.setName(savedUniversity.getName());
