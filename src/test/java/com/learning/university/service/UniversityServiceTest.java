@@ -62,7 +62,7 @@ class UniversityServiceTest {
         assertEquals("New York", response.getLocation());
         assertEquals(1, response.getStudentDTOList().size());
 
-        StudentDTO responseStudent = response.getStudentDTOList().getFirst();
+        StudentDTO responseStudent = response.getStudentDTOList().get(0);
         assertEquals("Alice", responseStudent.getName());
         assertEquals("alice@example.com", responseStudent.getEmail());
 
