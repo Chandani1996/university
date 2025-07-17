@@ -1,12 +1,10 @@
 package com.learning.university.controller;
 
+import com.learning.university.model.AddStudentDetailsRequest;
 import com.learning.university.model.UniversityDTO;
 import com.learning.university.service.UniversityService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/universities")
@@ -18,5 +16,9 @@ public class UniversityController {
     @PostMapping("/save")
     public UniversityDTO saveUniversityDetails(@RequestBody UniversityDTO universityDTO){
         return universityService.saveUniversityDetails(universityDTO);
+    }
+    @PutMapping("/add")
+    public AddStudentDetailsRequest addStudentDetails(@RequestBody AddStudentDetailsRequest addStudentDetails){
+        return universityService.addStudentDetails(addStudentDetails);
     }
 }
