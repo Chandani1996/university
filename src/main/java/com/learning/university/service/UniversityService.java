@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -86,5 +87,22 @@ public class UniversityService {
         addStudentDetailsRequest.setName(savedUniversity.getName());
         addStudentDetailsRequest.setStudentDTOList(studentDTOList);
         return addStudentDetailsRequest;
+    }
+
+    public List<String> fetchUniversityStudentnames(Integer id) {
+        List<String> studentList = new ArrayList<>();
+        University university = universityRespository.findAllById(id);
+        if (!Objects.nonNull(university)) {
+            throw new IllegalArgumentException("No value found for the given university");
+        }
+
+        studentList = university.getStudents().stream()
+                .map(Student::getName)
+                .collect(Collectors.toList());
+
+        if (studentList.isEmpty()) {
+            System.out.println("No students found for the given university");
+        }
+        return studentList;
     }
 }
