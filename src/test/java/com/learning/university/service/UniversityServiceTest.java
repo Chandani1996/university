@@ -6,6 +6,7 @@ import com.learning.university.model.StudentDTO;
 import com.learning.university.model.UniversityDTO;
 import com.learning.university.repository.UniversityRespository;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -116,7 +117,7 @@ class UniversityServiceTest {
         student.setEmail("sandu@gmail.com");
         student.setEnrolledDate("05/09/2007");
 
-        Student student1 = new Student();g
+        Student student1 = new Student();
         student1.setName("Ram");
         student1.setEmail("ram@gmail.com");
         student1.setEnrolledDate("08/01/2006");
@@ -133,11 +134,47 @@ class UniversityServiceTest {
 
         when(universityRespository.findAllById(234)).thenReturn(university);
 
-        List<String> students = universityService.displayUniversityStudentDetails(234);
+        List<String> students = universityService.fetchUniversityStudentnames(234);
 
         assertEquals(2, students.size());
         assertEquals("Sandeep", students.get(0));
         assertEquals("Ram", students.get(1));
     }
 
+    @Test
+    void testDisplayUniversityStudentDetails_withoutStudents() {
+        UniversityService universityService = new UniversityService();
+        UniversityRespository universityRespository = mock(UniversityRespository.class);
+        universityService.universityRespository = universityRespository;
+
+        University university = new University();
+        university.setStudents(Collections.emptySet());
+
+        when(universityRespository.findAllById(123)).thenReturn(university);
+
+        List<String> studentDetails = universityService.fetchUniversityStudentnames(123);
+
+        assertEquals(0, studentDetails.size());
+
+    }
+
+    @Test
+    void testDisplayUniversityStudentDetails_withoutUniversity() {
+        try {
+            UniversityService universityService = new UniversityService();
+            UniversityRespository universityRespository = mock(UniversityRespository.class);
+            universityService.universityRespository = universityRespository;
+
+//            University university = new University();
+//            university.setName(isNull());
+
+            when(universityRespository.findAllById(17)).thenReturn(null);
+
+            universityService.fetchUniversityStudentnames(17);
+        } catch (IllegalArgumentException e) {
+
+            assertEquals("No value found for the given university",e.getMessage());
+        }
+    }
 }
+

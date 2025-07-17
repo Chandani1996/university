@@ -22,7 +22,7 @@ public class UniversityController {
 
     @GetMapping("/university/{id}")
     public List<String> displayUniversityStudentDetails(@PathVariable Integer id) {
-        return universityService.displayUniversityStudentDetails(id);
+        return universityService.fetchUniversityStudentnames(id);
     }
 
 }

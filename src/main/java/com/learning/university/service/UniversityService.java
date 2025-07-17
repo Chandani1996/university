@@ -60,14 +60,14 @@ public class UniversityService {
 
     }
 
-    public List<String> displayUniversityStudentDetails(Integer id) {
+    public List<String> fetchUniversityStudentnames(Integer id) {
         List<String> studentList = new ArrayList<>();
-        University saveduniversity = universityRespository.findAllById(id);
-        if (!Objects.nonNull(saveduniversity)) {
-            throw new IllegalArgumentException(" No  value found for the given University");
+        University university = universityRespository.findAllById(id);
+        if (!Objects.nonNull(university)) {
+            throw new IllegalArgumentException("No value found for the given university");
         }
 
-        studentList = saveduniversity.getStudents().stream()
+        studentList = university.getStudents().stream()
                 .map(Student::getName)
                 .collect(Collectors.toList());
 
