@@ -107,7 +107,7 @@ class UniversityServiceTest {
     }
 
     @Test
-    void testDisplayUniversityStudentDetails_withStudents() {
+    void testFetchUniversityStudentNames() {
         UniversityRespository universityRespository = mock(UniversityRespository.class);
         UniversityService universityService = new UniversityService();
         universityService.universityRespository = universityRespository;
@@ -164,9 +164,6 @@ class UniversityServiceTest {
             UniversityService universityService = new UniversityService();
             UniversityRespository universityRespository = mock(UniversityRespository.class);
             universityService.universityRespository = universityRespository;
-
-//            University university = new University();
-//            university.setName(isNull());
 
             when(universityRespository.findAllById(17)).thenReturn(null);
 
