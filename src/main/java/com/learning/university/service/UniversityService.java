@@ -8,7 +8,9 @@ import com.learning.university.repository.UniversityRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -55,5 +57,16 @@ public class UniversityService {
         }
         return  universityResponse;
 
+    }
+
+    public Map<String,String> returnUniversityDetails(String location, String establishedYear) {
+
+        Map<String,String> universityList = new HashMap<>();
+
+        List<University> universities = universityRespository.findAllByLocationAndEstablishedYear(location,establishedYear);
+
+        universityList= universities.stream()
+                .collect(Collectors.toMap(University::getName,University::getEstablishedYear));
+        return universityList;
     }
 }
