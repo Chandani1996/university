@@ -8,10 +8,7 @@ import com.learning.university.repository.UniversityRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,11 +56,15 @@ public class UniversityService {
 
     }
 
-    public Map<String,String> returnUniversityDetails(String location, String establishedYear) {
+    public Map<String,String> returnUniversityDetails(String location, String establishedYear){
 
         Map<String,String> universityList = new HashMap<>();
 
         List<University> universities = universityRespository.findAllByLocationAndEstablishedYear(location,establishedYear);
+
+        if(universityList.isEmpty()){
+            throw new IllegalArgumentException("No university found for the give location and year");
+        }
 
         universityList= universities.stream()
                 .collect(Collectors.toMap(University::getName,University::getEstablishedYear));

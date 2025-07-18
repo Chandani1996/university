@@ -104,4 +104,22 @@ class UniversityServiceTest {
 
         verify(universityRespository, times(1)).save(any(University.class));
     }
+
+    @Test
+    void testReturnUniversityDetails(){
+        try {
+            UniversityService universityService = new UniversityService();
+            UniversityRespository universityRespository = mock(UniversityRespository.class);
+            universityService.universityRespository = universityRespository;
+
+            when(universityRespository.findAllByLocationAndEstablishedYear("Bengaluru", "18-07-2001"))
+                    .thenReturn(null);
+
+            universityService.returnUniversityDetails("Bengaluru", "18-07-2001");
+        }
+        catch (IllegalArgumentException e){
+            assertEquals("No university found for the give location and year",e.getMessage());
+        }
+    }
 }
+
