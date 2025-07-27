@@ -9,5 +9,21 @@ import java.util.Objects;
 public class AddStudentDetailsRequest {
     private String name;
     private List<StudentDTO> studentDTOList;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<StudentDTO> getStudentDTOList() {
+        return studentDTOList;
+    }
+
+    public void setStudentDTOList(List<StudentDTO> studentDTOList) {
+        this.studentDTOList = studentDTOList;
+    }
 }
 
