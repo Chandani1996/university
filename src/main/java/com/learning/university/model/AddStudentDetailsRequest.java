@@ -1,14 +1,19 @@
 package com.learning.university.model;
 
-import lombok.Data;
-
 import java.util.List;
 import java.util.Objects;
 
-@Data
 public class AddStudentDetailsRequest {
     private String name;
     private List<StudentDTO> studentDTOList;
+
+    public AddStudentDetailsRequest() {
+    }
+
+    public AddStudentDetailsRequest(String name, List<StudentDTO> studentDTOList) {
+        this.name = name;
+        this.studentDTOList = studentDTOList;
+    }
 
     public String getName() {
         return name;
@@ -24,6 +29,26 @@ public class AddStudentDetailsRequest {
 
     public void setStudentDTOList(List<StudentDTO> studentDTOList) {
         this.studentDTOList = studentDTOList;
+    }
+
+    @Override
+    public String toString() {
+        return "AddStudentDetailsRequest{" +
+                "name='" + name + '\'' +
+                ", studentDTOList=" + studentDTOList +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AddStudentDetailsRequest that)) return false;
+        return Objects.equals(name, that.name) && Objects.equals(studentDTOList, that.studentDTOList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, studentDTOList);
     }
 }
 

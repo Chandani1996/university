@@ -7,6 +7,7 @@ import com.learning.university.model.StudentDTO;
 import com.learning.university.model.UniversityDTO;
 import com.learning.university.repository.UniversityRespository;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -61,7 +62,7 @@ class UniversityServiceTest {
         assertEquals("New York", response.getLocation());
         assertEquals(1, response.getStudentDTOList().size());
 
-        StudentDTO responseStudent = response.getStudentDTOList().getFirst();
+        StudentDTO responseStudent = response.getStudentDTOList().get(0);
         assertEquals("Alice", responseStudent.getName());
         assertEquals("alice@example.com", responseStudent.getEmail());
 
@@ -158,5 +159,72 @@ class UniversityServiceTest {
         verify(universityRespository).findByName(universityName);
         verify(universityRespository).save(any(University.class));
     }
-}
 
+    @Test
+    void testFetchUniversityStudentNames() {
+        UniversityRespository universityRespository = mock(UniversityRespository.class);
+        UniversityService universityService = new UniversityService();
+        universityService.universityRespository = universityRespository;
+
+        Student student = new Student();
+        student.setName("Sandeep");
+        student.setEmail("sandu@gmail.com");
+        student.setEnrolledDate("05/09/2007");
+
+        Student student1 = new Student();
+        student1.setName("Ram");
+        student1.setEmail("ram@gmail.com");
+        student1.setEnrolledDate("08/01/2006");
+
+        Set<Student> studentset = new HashSet<>();
+        studentset.add(student);
+        studentset.add(student1);
+
+        University university = new University();
+        university.setName("Solo University");
+        university.setLocation("Delhi");
+        university.setEstablishedYear(String.valueOf(2000));
+        university.setStudents(studentset);
+
+        when(universityRespository.findAllById(234)).thenReturn(university);
+
+        List<String> students = universityService.fetchUniversityStudentnames(234);
+
+        assertEquals(2, students.size());
+        assertEquals("Sandeep", students.get(0));
+        assertEquals("Ram", students.get(1));
+    }
+
+    @Test
+    void testDisplayUniversityStudentDetails_withoutStudents() {
+        UniversityService universityService = new UniversityService();
+        UniversityRespository universityRespository = mock(UniversityRespository.class);
+        universityService.universityRespository = universityRespository;
+
+        University university = new University();
+        university.setStudents(Collections.emptySet());
+
+        when(universityRespository.findAllById(123)).thenReturn(university);
+
+        List<String> studentDetails = universityService.fetchUniversityStudentnames(123);
+
+        assertEquals(0, studentDetails.size());
+
+    }
+
+    @Test
+    void testDisplayUniversityStudentDetails_withoutUniversity() {
+        try {
+            UniversityService universityService = new UniversityService();
+            UniversityRespository universityRespository = mock(UniversityRespository.class);
+            universityService.universityRespository = universityRespository;
+
+            when(universityRespository.findAllById(17)).thenReturn(null);
+
+            universityService.fetchUniversityStudentnames(17);
+        } catch (IllegalArgumentException e) {
+
+            assertEquals("No value found for the given university",e.getMessage());
+        }
+    }
+}
